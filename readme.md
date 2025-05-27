@@ -2,6 +2,12 @@
 
 A modern web-based flashcard application for studying and learning through interactive challenges and self-assessment. Built with vanilla JavaScript and designed for students and lifelong learners.
 
+## Try It Now
+
+**[Live Demo](https://tabibitodk.github.io/Flashcard-FrontEnd/)**
+
+Experience the application with sample mathematics flashcards. No installation required - works directly in your browser.
+
 ## Features
 
 ### Main Dashboard
