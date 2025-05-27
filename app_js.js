@@ -1,5 +1,8 @@
 // Configuration: 1 = Demo Mode, 0 = API Mode
-const DEMO_MODE = 1;
+const DEMO_MODE = 0;
+
+// Base API URL
+const API_BASE_URL = 'https://JeorgeC-FlashCardBackEnd.hf.space';
 
 // Demo data
 const demoFolders = [
@@ -17,27 +20,6 @@ const demoFlashcards = {
         { question_id: "3", question: { text: "What is the square root of 64?", image_url: null }, answers: [{ text: "8", image_url: null }] },
         { question_id: "4", question: { text: "What is 15% of 200?", image_url: null }, answers: [{ text: "30", image_url: null }] },
         { question_id: "5", question: { text: "What is the area of a circle with radius 5?", image_url: null }, answers: [{ text: "25π or approximately 78.54", image_url: null }] }
-    ],
-    "2": [
-        { question_id: "6", question: { text: "When did World War II end?", image_url: null }, answers: [{ text: "1945", image_url: null }] },
-        { question_id: "7", question: { text: "Who was the first President of the United States?", image_url: null }, answers: [{ text: "George Washington", image_url: null }] },
-        { question_id: "8", question: { text: "In which year did the Berlin Wall fall?", image_url: null }, answers: [{ text: "1989", image_url: null }] },
-        { question_id: "9", question: { text: "Who wrote the Declaration of Independence?", image_url: null }, answers: [{ text: "Thomas Jefferson", image_url: null }] }
-    ],
-    "3": [
-        { question_id: "10", question: { text: "What is the chemical symbol for gold?", image_url: null }, answers: [{ text: "Au", image_url: null }] },
-        { question_id: "11", question: { text: "How many bones are in the adult human body?", image_url: null }, answers: [{ text: "206", image_url: null }] },
-        { question_id: "12", question: { text: "What is the speed of light in vacuum?", image_url: null }, answers: [{ text: "299,792,458 meters per second", image_url: null }] },
-        { question_id: "13", question: { text: "What gas makes up about 78% of Earth's atmosphere?", image_url: null }, answers: [{ text: "Nitrogen", image_url: null }] }
-    ],
-    "4": [
-        { question_id: "14", question: { text: "Who wrote 'Romeo and Juliet'?", image_url: null }, answers: [{ text: "William Shakespeare", image_url: null }] },
-        { question_id: "15", question: { text: "What is the first line of 'Pride and Prejudice'?", image_url: null }, answers: [{ text: "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.", image_url: null }] }
-    ],
-    "5": [
-        { question_id: "16", question: { text: "What is the capital of Australia?", image_url: null }, answers: [{ text: "Canberra", image_url: null }] },
-        { question_id: "17", question: { text: "Which is the longest river in the world?", image_url: null }, answers: [{ text: "The Nile River", image_url: null }] },
-        { question_id: "18", question: { text: "What is the highest mountain in the world?", image_url: null }, answers: [{ text: "Mount Everest", image_url: null }] }
     ]
 };
 
@@ -54,7 +36,7 @@ async function fetchFolders() {
         return demoFolders.sort((a, b) => a.folder_name.localeCompare(b.folder_name));
     } else {
         try {
-            const response = await fetch('/flashcard-lists');
+            const response = await fetch(`${API_BASE_URL}/flashcard-lists`);
             const data = await response.json();
             return data.sort((a, b) => a.folder_name.localeCompare(b.folder_name));
         } catch (error) {
@@ -69,7 +51,7 @@ async function fetchFlashcards(folderId) {
         return demoFlashcards[folderId] || [];
     } else {
         try {
-            const response = await fetch(`/flashcard-folder/${folderId}`);
+            const response = await fetch(`${API_BASE_URL}/flashcard-folder/${folderId}`);
             return await response.json();
         } catch (error) {
             console.error('Error fetching flashcards:', error);
@@ -81,7 +63,7 @@ async function fetchFlashcards(folderId) {
 async function markChallengeComplete(folderId) {
     if (!DEMO_MODE) {
         try {
-            await fetch(`/done-challenge/${folderId}`, { method: 'POST' });
+            await fetch(`${API_BASE_URL}/done-challenge/${folderId}`, { method: 'POST' });
         } catch (error) {
             console.error('Error marking challenge complete:', error);
         }
@@ -167,7 +149,6 @@ function startChallenge() {
         return;
     }
     
-    // Shuffle flashcards for random order
     currentFlashcards = [...currentFlashcards].sort(() => Math.random() - 0.5);
     
     showPage('challengePage');
@@ -185,13 +166,11 @@ function showCurrentQuestion() {
     document.getElementById('challengeAnswer').textContent = flashcard.answers[0].text;
     document.getElementById('challengeAnswer').classList.remove('show');
     
-    // Update progress
     const progress = ((challengeIndex + 1) / currentFlashcards.length) * 100;
     document.getElementById('progressFill').style.width = progress + '%';
     document.getElementById('questionCounter').textContent = 
         `Question ${challengeIndex + 1} of ${currentFlashcards.length}`;
     
-    // Reset buttons
     document.getElementById('revealBtn').style.display = 'inline-block';
     document.getElementById('correctBtn').style.display = 'none';
     document.getElementById('incorrectBtn').style.display = 'none';
@@ -235,7 +214,6 @@ async function showResults() {
     document.getElementById('incorrectCount').textContent = challengeResults.incorrect;
     document.getElementById('totalCount').textContent = challengeResults.correct + challengeResults.incorrect;
     
-    // Mark challenge as complete
     if (currentFolder) {
         await markChallengeComplete(currentFolder.folder_id);
     }
