@@ -1,122 +1,135 @@
-# 📚 Flashcard Study Application
+# Flashcard Study Application
 
-A modern, interactive web-based flashcard application designed to help users study and learn through spaced repetition and self-assessment. Perfect for students, professionals, and lifelong learners who want to master new subjects efficiently.
+A modern web-based flashcard application for studying and learning through interactive challenges and self-assessment. Built with vanilla JavaScript and designed for students and lifelong learners.
 
-## ✨ Features
+## Features
 
-### 🏠 **Main Dashboard**
-- **Organized Learning**: Browse flashcard folders by subject or topic
-- **Smart Search**: Real-time search functionality to quickly find specific folders
-- **Progress Tracking**: See the number of flashcards in each folder at a glance
-- **Alphabetical Sorting**: Folders are automatically organized for easy navigation
+### Main Dashboard
+- Browse flashcard folders organized by subject
+- Real-time search functionality to find specific folders
+- Display flashcard count for each folder
+- Alphabetical sorting for easy navigation
+- Responsive design for desktop and mobile
 
-### 📂 **Study Materials**
-- **Expandable Flashcards**: Click any flashcard to reveal the answer
-- **Clean Organization**: Each folder contains related flashcards grouped by subject
-- **Easy Navigation**: Seamless movement between folders and main dashboard
+### Study Materials
+- Expandable flashcards - click questions to reveal answers
+- Clean folder organization by subject
+- Smooth animations and visual feedback
+- Easy navigation between folders and dashboard
 
-### 🎯 **Interactive Challenges**
-- **Study Mode**: Test your knowledge with interactive flashcard challenges
-- **Progress Visualization**: Real-time progress bar and question counter
-- **Self-Assessment**: Mark your answers as correct or incorrect
-- **Randomized Questions**: Questions are shuffled for better learning retention
-- **Detailed Results**: Get comprehensive statistics after completing challenges
+### Interactive Challenges
+- Test knowledge with timed study sessions
+- Real-time progress tracking with visual progress bar
+- Self-assessment system (mark correct/incorrect)
+- Randomized question order for better retention
+- Option to end challenges early
 
-### 📊 **Performance Analytics**
-- **Challenge Results**: Track correct vs incorrect answers
-- **Success Rate**: Monitor your learning progress over time
-- **Challenge History**: System tracks completed challenges (API mode)
+### Performance Tracking
+- Detailed results after each challenge
+- Statistics showing correct vs incorrect answers
+- Visual performance metrics
+- Challenge completion tracking (when using API mode)
 
-## 🚀 Live Demo
+## Demo
 
-**[Try the Live Demo](https://your-username.github.io/flashcard-study-app/)**
+The application includes sample data for immediate testing:
 
-The application includes sample flashcards across multiple subjects:
-- **Mathematics** (15 cards) - Basic math, algebra, and geometry
-- **History** (12 cards) - World history and important events  
-- **Science** (20 cards) - Chemistry, biology, and physics
-- **English Literature** (8 cards) - Classic authors and famous works
-- **Geography** (18 cards) - World capitals, landmarks, and natural features
+**Mathematics** (5 flashcards)
+- Basic arithmetic: "What is 2 + 2?"
+- Algebra: "What is the derivative of x²?"
+- Geometry: "What is the area of a circle with radius 5?"
+- And more...
 
-## 🛠️ Technical Implementation
+## Technical Stack
 
-### **Frontend Architecture**
-- **Pure Vanilla JavaScript** - No frameworks required, lightweight and fast
-- **Responsive CSS** - Modern design that works on desktop and mobile
-- **Single Page Application** - Smooth navigation without page reloads
-- **Progressive Enhancement** - Works without JavaScript for basic functionality
+- **Frontend**: Vanilla JavaScript (no frameworks)
+- **Styling**: Bootstrap 5.3.0 + custom CSS
+- **Icons**: Font Awesome 6.4.0
+- **Architecture**: Single Page Application
+- **Design**: Mobile-first responsive layout
 
-### **Dual Mode Operation**
+## Getting Started
 
-#### 🎮 **Demo Mode** (Default)
-- Uses built-in sample data for immediate testing
-- No backend required - perfect for GitHub Pages hosting
-- Includes realistic flashcard data across multiple subjects
-- Ideal for demonstrating functionality and user testing
+### Local Development
 
-#### 🔌 **API Mode**
-- Ready for backend integration
-- Implements RESTful API calls according to specification
-- Includes comprehensive error handling
-- Easy switch between modes via configuration constant
-
-### **API Integration Ready**
-
-The application is designed to work with the following API endpoints:
-
-```javascript
-GET /flashcard-lists          // Fetch all flashcard folders
-GET /flashcard-folder/{id}    // Get flashcards from specific folder  
-POST /done-challenge/{id}     // Mark challenge as completed
-GET /health                   // API health check
+1. Clone the repository:
+```bash
+git clone https://github.com/your-username/flashcard-study-app.git
+cd flashcard-study-app
 ```
 
-## 🚀 Quick Start
+2. Start a local server:
+```bash
+# Python
+python -m http.server 8000
 
-### **Option 1: GitHub Pages (Recommended)**
-1. Fork this repository
-2. Go to repository Settings → Pages
-3. Select "Deploy from a branch" → "main branch"
-4. Your app will be available at `https://your-username.github.io/flashcard-study-app/`
+# Node.js
+npx http-server
 
-### **Option 2: Local Development**
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/flashcard-study-app.git
-   cd flashcard-study-app
-   ```
-
-2. Serve the files using any local server:
-   ```bash
-   # Using Python 3
-   python -m http.server 8000
-   
-   # Using Node.js (http-server)
-   npx http-server
-   
-   # Using PHP
-   php -S localhost:8000
-   ```
+# PHP
+php -S localhost:8000
+```
 
 3. Open `http://localhost:8000` in your browser
 
-## ⚙️ Configuration
+### GitHub Pages Deployment
 
-### **Switching Between Demo and API Mode**
+1. Fork this repository
+2. Go to Settings → Pages
+3. Select "Deploy from a branch" → "main branch"
+4. Access at `https://your-username.github.io/flashcard-study-app/`
 
-Edit the configuration constant in `app.js`:
+## Configuration
+
+### Demo vs API Mode
+
+The application supports two modes controlled by a configuration constant in `app.js`:
 
 ```javascript
 // Configuration: 1 = Demo Mode, 0 = API Mode
-const DEMO_MODE = 1; // Change to 0 for API mode
+const DEMO_MODE = 1;
 ```
 
-- **Demo Mode (1)**: Uses sample data, perfect for testing and demonstration
-- **API Mode (0)**: Connects to your backend API endpoints
+**Demo Mode (Default)**: Uses built-in sample data, perfect for testing and GitHub Pages deployment.
 
-### **Adding Custom Demo Data**
+**API Mode**: Connects to backend API endpoints for dynamic data.
 
-You can easily customize the demo data by editing the arrays in `app.js`:
+### API Integration
+
+When using API mode, the application connects to:
+
+```
+Base URL: https://JeorgeC-FlashCardBackEnd.hf.space
+
+GET /flashcard-lists          # Fetch all folders
+GET /flashcard-folder/{id}    # Get flashcards from folder
+POST /done-challenge/{id}     # Mark challenge complete
+```
+
+Expected API response format:
+```javascript
+// Folders
+[
+  {
+    "folder_id": "1",
+    "folder_name": "Mathematics", 
+    "total_flashcards": 15
+  }
+]
+
+// Flashcards
+[
+  {
+    "question_id": "1",
+    "question": { "text": "What is 2 + 2?", "image_url": null },
+    "answers": [{ "text": "4", "image_url": null }]
+  }
+]
+```
+
+### Customizing Demo Data
+
+Edit the demo arrays in `app.js`:
 
 ```javascript
 const demoFolders = [
@@ -134,22 +147,60 @@ const demoFlashcards = {
 };
 ```
 
-## 📁 File Structure
+## Project Structure
 
 ```
 flashcard-study-app/
-├── index.html          # Main HTML structure and styling
-├── app.js             # JavaScript application logic
-├── README.md          # Project documentation
-└── .gitignore         # Git ignore rules (optional)
+├── index.html          # Main HTML structure
+├── styles.css          # Custom CSS styles
+├── app.js             # Application logic
+└── README.md          # Documentation
 ```
 
-## 🎨 Design Philosophy
+## Design System
 
-- **User-Centric**: Intuitive interface designed for learners of all ages
-- **Accessible**: Clean typography and high contrast for readability  
-- **Responsive**: Optimized for both desktop and mobile devices
-- **Modern**: Contemporary design with smooth animations and transitions
-- **Performance**: Lightweight codebase with fast loading times
+The application uses a modern design system with:
 
-## 🔧
+- CSS custom properties for consistent theming
+- Gradient color scheme (primary: #667eea, secondary: #764ba2)
+- Card-based layout with smooth animations
+- Responsive breakpoints for all screen sizes
+- Accessibility features including focus indicators and reduced motion support
+
+## Browser Support
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+- Mobile browsers (iOS Safari, Chrome Mobile)
+
+## Development Notes
+
+### Error Handling
+- Comprehensive try-catch blocks for API calls
+- Graceful fallback when network requests fail
+- User-friendly error messages
+- Proper handling of empty states
+
+### Performance
+- Lightweight vanilla JavaScript implementation
+- Minimal external dependencies
+- Efficient DOM manipulation
+- Hardware-accelerated CSS animations
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature-name`)
+3. Commit your changes (`git commit -am 'Add feature'`)
+4. Push to the branch (`git push origin feature-name`)
+5. Create a Pull Request
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Acknowledgments
+
+Built with Bootstrap, Font Awesome, and modern web standards.
