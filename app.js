@@ -29,6 +29,8 @@ let currentFlashcards = [];
 let challengeIndex = 0;
 let challengeResults = { correct: 0, incorrect: 0 };
 let folders = [];
+let questionResults = []; // Track each question's result
+let currentReviewType = null; // Track current review type
 
 // API functions
 async function fetchFolders() {
@@ -143,6 +145,7 @@ function toggleAnswer(index) {
 function startChallenge() {
     challengeIndex = 0;
     challengeResults = { correct: 0, incorrect: 0 };
+    questionResults = []; // Reset question tracking
     
     if (currentFlashcards.length === 0) {
         alert('No flashcards available for this folder.');
@@ -186,6 +189,10 @@ function revealAnswer() {
 
 function markCorrect() {
     challengeResults.correct++;
+    questionResults.push({
+        question: currentFlashcards[challengeIndex],
+        isCorrect: true
+    });
     document.getElementById('correctBtn').style.display = 'none';
     document.getElementById('incorrectBtn').style.display = 'none';
     document.getElementById('nextBtn').style.display = 'inline-block';
@@ -193,6 +200,10 @@ function markCorrect() {
 
 function markIncorrect() {
     challengeResults.incorrect++;
+    questionResults.push({
+        question: currentFlashcards[challengeIndex],
+        isCorrect: false
+    });
     document.getElementById('correctBtn').style.display = 'none';
     document.getElementById('incorrectBtn').style.display = 'none';
     document.getElementById('nextBtn').style.display = 'inline-block';
@@ -231,6 +242,114 @@ function setupSearch() {
         renderFolders(filteredFolders);
     });
 }
+
+function toggleReview(type) {
+    const reviewSection = document.getElementById('reviewSection');
+    
+    // If same type is clicked or section is visible, hide it
+    if (currentReviewType === type && reviewSection.style.display !== 'none') {
+        hideReview();
+        return;
+    }
+    
+    // Update all stat cards to remove active state
+    document.querySelectorAll('.stat-card').forEach(card => {
+        card.classList.remove('active-stat');
+    });
+    
+    // Add active state to clicked card
+    event.currentTarget.classList.add('active-stat');
+    
+    let questionsToShow = [];
+    let title = '';
+    
+    switch(type) {
+        case 'correct':
+            questionsToShow = questionResults.filter(result => result.isCorrect);
+            title = 'Correct Answers';
+            break;
+        case 'incorrect':
+            questionsToShow = questionResults.filter(result => !result.isCorrect);
+            title = 'Incorrect Answers';
+            break;
+        case 'total':
+            questionsToShow = questionResults;
+            title = 'All Questions';
+            break;
+    }
+    
+    currentReviewType = type;
+    document.getElementById('reviewTitle').textContent = title;
+    renderReviewList(questionsToShow, type === 'total');
+    
+    // Show the review section with animation
+    reviewSection.style.display = 'block';
+    setTimeout(() => {
+        reviewSection.classList.add('show');
+    }, 10);
+}
+
+function hideReview() {
+    const reviewSection = document.getElementById('reviewSection');
+    reviewSection.classList.remove('show');
+    
+    // Remove active state from all stat cards
+    document.querySelectorAll('.stat-card').forEach(card => {
+        card.classList.remove('active-stat');
+    });
+    
+    setTimeout(() => {
+        reviewSection.style.display = 'none';
+        currentReviewType = null;
+    }, 300);
+}
+
+function renderReviewList(results, showStatus = false) {
+    const reviewList = document.getElementById('reviewList');
+    reviewList.innerHTML = '';
+    
+    if (results.length === 0) {
+        reviewList.innerHTML = '<p class="text-muted text-center py-4">No questions to display.</p>';
+        return;
+    }
+    
+    results.forEach((result, index) => {
+        const flashcard = result.question;
+        const isCorrect = result.isCorrect;
+        
+        const flashcardItem = document.createElement('div');
+        flashcardItem.className = 'flashcard-item';
+        if (showStatus) {
+            flashcardItem.classList.add(isCorrect ? 'correct-border' : 'incorrect-border');
+        }
+        
+        flashcardItem.innerHTML = `
+            <div class="flashcard-question" onclick="toggleReviewAnswer(${index})">
+                <span>${flashcard.question.text}</span>
+                <div class="d-flex align-items-center">
+                    ${showStatus ? `<span class="status-badge ${isCorrect ? 'correct' : 'incorrect'} me-2">
+                        <i class="fas ${isCorrect ? 'fa-check' : 'fa-times'}"></i>
+                    </span>` : ''}
+                    <span class="expand-icon">▼</span>
+                </div>
+            </div>
+            <div class="flashcard-answer" id="review-answer-${index}">
+                ${flashcard.answers[0].text}
+            </div>
+        `;
+        
+        reviewList.appendChild(flashcardItem);
+    });
+}
+
+function toggleReviewAnswer(index) {
+    const answer = document.getElementById(`review-answer-${index}`);
+    const icon = answer.previousElementSibling.querySelector('.expand-icon');
+    
+    answer.classList.toggle('show');
+    icon.classList.toggle('expanded');
+}
+
 
 // Initialize app
 async function init() {
