@@ -111,6 +111,19 @@ body {
     margin-bottom: 20px;
 }
 
+.folder-win-rate {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.folder-win-rate span {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+
 /* Search Container */
 .search-container {
     max-width: 500px;
@@ -191,6 +204,24 @@ body {
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 0.9rem;
+    font-weight: 500;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+}
+
+.folder-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.win-rate {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
     font-weight: 500;
     align-self: flex-start;
     display: inline-flex;
@@ -418,6 +449,25 @@ body {
 .results-subtitle {
     font-size: 1.2rem;
     color: #666;
+}
+
+.session-stats {
+    margin: 20px 0;
+    padding: 20px;
+    background: var(--light-color);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--success-color);
+}
+
+.session-win-rate {
+    font-size: 1.3rem;
+    color: var(--dark-color);
+    margin: 0;
+}
+
+.session-win-rate span {
+    color: var(--success-color);
+    font-weight: 700;
 }
 
 @media (max-width: 767px) {

@@ -6,11 +6,11 @@ const API_BASE_URL = 'https://JeorgeC-FlashCardBackEnd.hf.space';
 
 // Demo data
 const demoFolders = [
-    { folder_id: "1", folder_name: "Mathematics", total_flashcards: 15 },
-    { folder_id: "2", folder_name: "History", total_flashcards: 12 },
-    { folder_id: "3", folder_name: "Science", total_flashcards: 20 },
-    { folder_id: "4", folder_name: "English Literature", total_flashcards: 8 },
-    { folder_id: "5", folder_name: "Geography", total_flashcards: 18 }
+    { folder_id: "1", folder_name: "Mathematics", total_flashcards: 15, total_correct: 45, total_incorrect: 15, total_challenges: 6 },
+    { folder_id: "2", folder_name: "History", total_flashcards: 12, total_correct: 32, total_incorrect: 8, total_challenges: 4 },
+    { folder_id: "3", folder_name: "Science", total_flashcards: 20, total_correct: 58, total_incorrect: 22, total_challenges: 8 },
+    { folder_id: "4", folder_name: "English Literature", total_flashcards: 8, total_correct: 21, total_incorrect: 9, total_challenges: 3 },
+    { folder_id: "5", folder_name: "Geography", total_flashcards: 18, total_correct: 40, total_incorrect: 20, total_challenges: 5 }
 ];
 
 const demoFlashcards = {
@@ -32,6 +32,8 @@ let folders = [];
 let questionResults = []; // Track each question's result
 let currentReviewType = null; // Track current review type
 
+
+
 // API functions
 async function fetchFolders() {
     if (DEMO_MODE) {
@@ -40,6 +42,7 @@ async function fetchFolders() {
         try {
             const response = await fetch(`${API_BASE_URL}/flashcard-lists`);
             const data = await response.json();
+            console.log(data);
             return data.sort((a, b) => a.folder_name.localeCompare(b.folder_name));
         } catch (error) {
             console.error('Error fetching folders:', error);
@@ -62,10 +65,16 @@ async function fetchFlashcards(folderId) {
     }
 }
 
-async function markChallengeComplete(folderId) {
+async function markChallengeComplete(folderId, correct, incorrect) {
     if (!DEMO_MODE) {
         try {
-            await fetch(`${API_BASE_URL}/done-challenge/${folderId}`, { method: 'POST' });
+            await fetch(`${API_BASE_URL}/done-challenge/${folderId}`, { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ correct, incorrect })
+            });
         } catch (error) {
             console.error('Error marking challenge complete:', error);
         }
@@ -73,6 +82,13 @@ async function markChallengeComplete(folderId) {
 }
 
 // UI functions
+function calculateWinRate(correct, incorrect) {
+    const total = correct + incorrect;
+    if (total === 0) return 0;
+    return Math.round((correct / total) * 100);
+}
+
+
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
@@ -89,12 +105,17 @@ function renderFolders(foldersToRender = folders) {
     
     foldersToRender.forEach(folder => {
         const folderItem = document.createElement('div');
+        const winRate = calculateWinRate(folder.total_correct || 0, folder.total_incorrect || 0);
+        const hasStats = (folder.total_correct || 0) + (folder.total_incorrect || 0) > 0;
         folderItem.className = 'folder-item';
         folderItem.onclick = () => showFolder(folder);
         
         folderItem.innerHTML = `
             <div class="folder-name">${folder.folder_name}</div>
-            <div class="flashcard-count">${folder.total_flashcards} cards</div>
+            <div class="folder-stats">
+                <div class="flashcard-count">${folder.total_flashcards} cards</div>
+                ${hasStats ? `<div class="win-rate">Win Rate: ${winRate}%</div>` : '<div class="win-rate">No attempts yet</div>'}
+            </div>
         `;
         
         folderList.appendChild(folderItem);
@@ -104,7 +125,11 @@ function renderFolders(foldersToRender = folders) {
 async function showFolder(folder) {
     currentFolder = folder;
     document.getElementById('folderTitle').textContent = folder.folder_name;
-    
+    const winRate = calculateWinRate(folder.total_correct || 0, folder.total_incorrect || 0);
+    const hasStats = (folder.total_correct || 0) + (folder.total_incorrect || 0) > 0;
+    const winRateText = hasStats ? `${winRate}%` : 'No attempts yet';
+    document.getElementById('folderWinRate').textContent = winRateText;
+        
     const flashcards = await fetchFlashcards(folder.folder_id);
     currentFlashcards = flashcards;
     
@@ -224,9 +249,13 @@ async function showResults() {
     document.getElementById('correctCount').textContent = challengeResults.correct;
     document.getElementById('incorrectCount').textContent = challengeResults.incorrect;
     document.getElementById('totalCount').textContent = challengeResults.correct + challengeResults.incorrect;
-    
+
+    // Add this new section:
+    const sessionWinRate = calculateWinRate(challengeResults.correct, challengeResults.incorrect);
+    document.getElementById('sessionWinRate').textContent = sessionWinRate + '%';
+
     if (currentFolder) {
-        await markChallengeComplete(currentFolder.folder_id);
+        await markChallengeComplete(currentFolder.folder_id, challengeResults.correct, challengeResults.incorrect);
     }
     
     showPage('resultsPage');

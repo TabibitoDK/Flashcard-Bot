@@ -55,6 +55,7 @@
                         </div>
                         <div class="text-center mb-4">
                             <h2 id="folderTitle" class="folder-title"></h2>
+                            <p class="folder-win-rate">Win Rate: <span id="folderWinRate">Loading...</span></p>
                             <button class="btn btn-primary btn-lg start-button" onclick="startChallenge()">
                                 <i class="fas fa-rocket me-2"></i>
                                 Start Challenge
@@ -128,6 +129,9 @@
                                 <i class="fas fa-trophy results-icon mb-3"></i>
                                 <h2 class="results-title">Challenge Complete!</h2>
                                 <p class="results-subtitle">Great job on completing your study session!</p>
+                                <div class="session-stats">
+                                    <h3 class="session-win-rate">Session Win Rate: <span id="sessionWinRate">0%</span></h3>
+                                </div>
                             </div>
                             <div class="row g-4 mb-5">
                                 <div class="col-lg-4 col-md-6">
