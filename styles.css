@@ -226,6 +226,8 @@ body {
     overflow: hidden;
     transition: var(--transition);
     box-shadow: var(--shadow-light);
+    width: 100%;
+    max-width: none; /* Ensure full width usage */
 }
 
 .flashcard-item:hover {
@@ -297,6 +299,7 @@ body {
     border-radius: 20px;
     padding: 40px;
     box-shadow: var(--shadow-heavy);
+    width: 100%;
     max-width: 700px;
     margin: 0 auto;
     min-height: 400px;
