@@ -140,24 +140,40 @@ async function showFolder(folder) {
 function renderFlashcards(flashcards) {
     const flashcardList = document.getElementById('flashcardList');
     flashcardList.innerHTML = '';
-    
+
     flashcards.forEach((flashcard, index) => {
+        const question = flashcard.question || {};
+        const answer = flashcard.answers[0] || {};
+
+        const questionContent = question.text
+            ? `<span>${question.text}</span>`
+            : question.image_url
+                ? `<img src="${question.image_url}" alt="Question Image" style="max-width: 100%; height: auto;">`
+                : `<span>No question content</span>`;
+
+        const answerContent = answer.text
+            ? answer.text
+            : answer.image_url
+                ? `<img src="${answer.image_url}" alt="Answer Image" style="max-width: 100%; height: auto;">`
+                : `No answer content`;
+
         const flashcardItem = document.createElement('div');
         flashcardItem.className = 'flashcard-item';
-        
+
         flashcardItem.innerHTML = `
             <div class="flashcard-question" onclick="toggleAnswer(${index})">
-                <span>${flashcard.question.text}</span>
+                ${questionContent}
                 <span class="expand-icon">▼</span>
             </div>
             <div class="flashcard-answer" id="answer-${index}">
-                ${flashcard.answers[0].text}
+                ${answerContent}
             </div>
         `;
-        
+
         flashcardList.appendChild(flashcardItem);
     });
 }
+
 
 function toggleAnswer(index) {
     const answer = document.getElementById(`answer-${index}`);
@@ -188,22 +204,41 @@ function showCurrentQuestion() {
         showResults();
         return;
     }
-    
+
     const flashcard = currentFlashcards[challengeIndex];
-    document.getElementById('challengeQuestion').textContent = flashcard.question.text;
-    document.getElementById('challengeAnswer').textContent = flashcard.answers[0].text;
-    document.getElementById('challengeAnswer').classList.remove('show');
-    
+    const question = flashcard.question || {};
+    const answer = flashcard.answers[0] || {};
+
+    const questionContent = question.text
+        ? question.text
+        : question.image_url
+            ? `<img src="${question.image_url}" alt="Question Image" style="max-width: 100%; height: auto;">`
+            : 'No question content';
+
+    const answerContent = answer.text
+        ? answer.text
+        : answer.image_url
+            ? `<img src="${answer.image_url}" alt="Answer Image" style="max-width: 100%; height: auto;">`
+            : 'No answer content';
+
+    const questionElem = document.getElementById('challengeQuestion');
+    const answerElem = document.getElementById('challengeAnswer');
+
+    questionElem.innerHTML = questionContent;
+    answerElem.innerHTML = answerContent;
+    answerElem.classList.remove('show');
+
     const progress = ((challengeIndex + 1) / currentFlashcards.length) * 100;
     document.getElementById('progressFill').style.width = progress + '%';
-    document.getElementById('questionCounter').textContent = 
+    document.getElementById('questionCounter').textContent =
         `Question ${challengeIndex + 1} of ${currentFlashcards.length}`;
-    
+
     document.getElementById('revealBtn').style.display = 'inline-block';
     document.getElementById('correctBtn').style.display = 'none';
     document.getElementById('incorrectBtn').style.display = 'none';
     document.getElementById('nextBtn').style.display = 'none';
 }
+
 
 function revealAnswer() {
     document.getElementById('challengeAnswer').classList.add('show');
@@ -336,25 +371,39 @@ function hideReview() {
 function renderReviewList(results, showStatus = false) {
     const reviewList = document.getElementById('reviewList');
     reviewList.innerHTML = '';
-    
+
     if (results.length === 0) {
         reviewList.innerHTML = '<p class="text-muted text-center py-4">No questions to display.</p>';
         return;
     }
-    
+
     results.forEach((result, index) => {
         const flashcard = result.question;
         const isCorrect = result.isCorrect;
-        
+        const question = flashcard.question || {};
+        const answer = flashcard.answers[0] || {};
+
+        const questionContent = question.text
+            ? `<span>${question.text}</span>`
+            : question.image_url
+                ? `<img src="${question.image_url}" alt="Question Image" style="max-width: 100%; height: auto;">`
+                : `<span>No question content</span>`;
+
+        const answerContent = answer.text
+            ? answer.text
+            : answer.image_url
+                ? `<img src="${answer.image_url}" alt="Answer Image" style="max-width: 100%; height: auto;">`
+                : `No answer content`;
+
         const flashcardItem = document.createElement('div');
         flashcardItem.className = 'flashcard-item';
         if (showStatus) {
             flashcardItem.classList.add(isCorrect ? 'correct-border' : 'incorrect-border');
         }
-        
+
         flashcardItem.innerHTML = `
             <div class="flashcard-question" onclick="toggleReviewAnswer(${index})">
-                <span>${flashcard.question.text}</span>
+                ${questionContent}
                 <div class="d-flex align-items-center">
                     ${showStatus ? `<span class="status-badge ${isCorrect ? 'correct' : 'incorrect'} me-2">
                         <i class="fas ${isCorrect ? 'fa-check' : 'fa-times'}"></i>
@@ -363,13 +412,14 @@ function renderReviewList(results, showStatus = false) {
                 </div>
             </div>
             <div class="flashcard-answer" id="review-answer-${index}">
-                ${flashcard.answers[0].text}
+                ${answerContent}
             </div>
         `;
-        
+
         reviewList.appendChild(flashcardItem);
     });
 }
+
 
 function toggleReviewAnswer(index) {
     const answer = document.getElementById(`review-answer-${index}`);
